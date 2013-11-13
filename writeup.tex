@@ -1,0 +1,86 @@
+\documentclass[letterpaper,10pt,titlepage]{article}
+
+\usepackage{geometry}
+\geometry{textheight=10in, textwidth=7.5in}
+
+\usepackage{hyperref}
+
+\def\name{Joshua Kociemba}
+
+\hypersetup{
+	pdfauthor = {\name},
+	pdfkeywords = {cs311 ``operating systems'' files filesystem I/O},
+	pdftitle = {CS 311 Project 2: UNIX Archiver},
+	pdfsubject = {CS 311 Project 2},
+	pdfpagemode = UseNone
+}
+
+\parindent = 0.0 in
+\parskip = 0.2 in
+
+\begin{document}
+
+\begin{enumerate}
+	\item A design for your system, as well as places your implementation
+deviated from this design.
+		\begin{enumerate}
+			\item Start by designing the way archive files are
+opened, if the archive doesn't exist handle the creation of the archive, and
+when the program exits make sure the archive is closed. This functions will be
+written first, because of their importance.
+			\item Write proper functions for printing out the
+content inside of the archive. All of the other functions will be useless if we
+can't see the changes being made to the archive. I will start with the verbose
+method of printing the archive, and then the concise option will be a walk in
+the park. 
+		\end{enumerate}
+
+	\item A work log, detailing what you did when -- this can fairly easily
+be created if you are using some form of revision control.
+		\begin{enumerate}
+			\item First Commit
+			\item Added myar.c
+			\item Added makefile
+			\item Added myar.h
+			\item Modified myar.c - updated main function to handle
+getopt arguments - still unfinished
+			\item Modified myar.c - missing break statements
+			\item Wrote arch\_open and arch\_close
+			\item Started to write arch\_write\_ghdr
+			\item Added writeup.tex
+			\item Started verbose and concise prints
+			\item Finished verbose and concise
+			\item Re-wrote large portions of myar.c
+			\item Added .tex compiler section to makefile
+		\end{enumerate}		
+
+	\item Any challenges you overcame in completing this assignment answers
+to the following questions:
+		\begin{enumerate}
+			\item What do you think the main point of this
+assignment is? Answer: I think the main point of this assignment was to learn
+more about system calls and file I/O. I learned a lot about how lseek, read, and
+write works in this assignment. I have the format of an arch file almost
+engraved into my memory.
+			\item How did you ensure your solution was correct?
+Testing details, for instance. Answer: My main testing method was comparison
+between my program and UNIX ar. Seeing how ar handles the different options and
+trying to recreate that as much as possible. I had a lot of trial and error when
+it came to reading from the archive file. I had problems with over-reading the
+header, or under-reading it. It was a tough problem to try and fix, because I
+had a hard time figuring out whether I was over or under reading the header
+line. I had other problems with figuring out how to get started with the
+assignment. But after getting a good design thought out for the system, things
+started to click.
+			\item What did you learn? Answer: The main thing I
+learned from this project was to have a solid design before I even start
+programming. Having small sections to get working is a lot more manageable than
+trying to do a very large portion of the assignment. I ended up running out of
+time on this assignment because of that. I also learned alot about what archive
+headers look like, and what each part of it means. I learned a lot about lseek(),
+and even more about read().
+		\end{enumerate}
+
+\end{enumerate}
+
+\end{document}
