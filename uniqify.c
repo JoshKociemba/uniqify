@@ -6,12 +6,19 @@
  * Description: Practice sorting user input/file input using pipes
  **/
 
+#define _XOPEN_SOURCE 600
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
 #include <time.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <ctype.h>
 
 #define MAX_SPROCS 1000
 #define WORD_SIZE 34
@@ -24,12 +31,12 @@ void forking_setup(int num_sprocs);
 /**
  * Function Header
  **/
-void parse_in(int num_sprocs);
+void parse_in(int num_sprocs, int fd_in);
 
 /**
  * Function Header
  **/
-void forke_sort(void);
+void forked_sort(void);
 
 /**
  * Function Header
@@ -51,14 +58,15 @@ int main(int argc, char **argv) {
 		usage();
 	} else {
 		num_sprocs = atoi(argv[1]);
-		FILE *input = fopen(argv[2], "w+");
-		fd_in = open
+		fd_in = open(argv[2], O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP\
+			       	| S_IROTH | S_IWOTH);
 	}
 
 	if (argv[3] != NULL) {
-		FILE *output = fopen(argv[3], "w+");
+		fd_out = open(argv[3], O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP\
+			       	| S_IWGRP | S_IROTH | S_IWOTH);
 	} else {
-		FILE *output = fopen("output", "w+");
+		printf("User input from terminal"); ///Fix this
 	}
 
 	if (num_sprocs > MAX_SPROCS) {
@@ -104,18 +112,54 @@ void forking_setup(int num_sprocs) {
 
 }
 
-void parse_in(int num_sprocs, FILE *input) {
+void parse_in(int num_sprocs, int fd_in) {
 	int pipe_fds[num_sprocs];
+	char word_buff[WORD_SIZE];
+	char *last_word;
+	char c;
+	int j;
 
-	if (pipe(pipefds) != 0) {
+	if (pipe(pipe_fds) != 0) {
 		perror("Them pipes are clogged again\n");
 		exit(-1);
 	}
 
 	for (int i = 0; i < num_sprocs; i++) {
-		
+		pipe_fds[i] = fdopen(fd_in[i][1], "w");
 
+		if (pipe_fds[i] == 0) {
+			perror("Couldn't open the pipe");
+			exit(-1);
+		}
 	}
+
+	while (fgets(word_buff, WORD_SIZE, stdin) != NULL) {
+		for (int i = 0; i < strlen(word_buff); i++) {
+			if (isalpha(word_buff[i]) == 0) {
+				word_buff[i] = ' ';
+			} else {
+				word_buff[i] = tolower(word_buff[i]);
+			}
+
+		}
+		j = 0;
+		last_word = strtok(word_buff, " ");
+		while (last_word != NULL) {
+			fputs(word_buff, pipe_fds[j]);
+			last_word = strtok(NULL, " ");
+			
+			if (j == (num_sprocs - 1)) {
+				j = 0;
+			} else {
+				j++;
+			}
+		}
+	}
+
+
+
+
+
 
 }
 
